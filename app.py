@@ -8,7 +8,8 @@ import psycopg2
 from urllib.parse import urlparse
 
 # Load DATABASE_URL from environment variables
-DATABASE_URL = "postgresql://postgres:7777@db.jbabxxrvperqfuermkwn.supabase.co:5432/postgres"
+DATABASE_URL = 'postgresql://web:VUgydDpJ1NCK14RYy4AUPTifXKewEy6w@dpg-cuolj8lds78s738m3etg-a.oregon-postgres.render.com/notes_zb32'
+#"postgresql://postgres:7777@db.jbabxxrvperqfuermkwn.supabase.co:5432/postgres"
 
 def get_db_connection():
     result = urlparse(DATABASE_URL)
