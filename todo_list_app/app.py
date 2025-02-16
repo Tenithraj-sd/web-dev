@@ -83,4 +83,5 @@ def delete_task(task_id):
 # Run the App
 if __name__ == '__main__':
     init_db()  # Run this once to create the table
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=8080)
+
