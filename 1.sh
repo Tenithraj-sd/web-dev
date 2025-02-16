@@ -1,3 +1,28 @@
+
+# Install Flask and Gunicorn
+echo "Installing Flask and Gunicorn..."
+pip install flask gunicorn
+
+# Create project structure
+echo "Setting up Flask project..."
+mkdir -p templates
+
+# Create app.py
+cat > app.py <<EOF
+from flask import Flask, render_template
+
+app = Flask(__name__)
+
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=5000)
+EOF
+
+# Create index.html
+cat > templates/index.html <<EOF
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -24,3 +49,8 @@
     <h1>Hello, World!</h1>
 </body>
 </html>
+EOF
+
+# Run the Flask app
+echo "Starting Flask app..."
+flask run --host=0.0.0.0 --port=5000
