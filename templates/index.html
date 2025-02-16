@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dark Mode Notes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Notes App</h1>
+        <form method="POST">
+            <textarea name="content" placeholder="Write a note..." required></textarea>
+            <button type="submit">Add Note</button>
+        </form>
+        <ul>
+            {% for note in notes %}
+                <li>
+                    {{ note[1] }}
+                    <form method="POST" action="/delete/{{ note[0] }}">
+                        <button type="submit" class="delete-btn">Delete</button>
+                    </form>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
+</body>
+</html>
