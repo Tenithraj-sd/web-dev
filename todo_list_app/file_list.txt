@@ -1,0 +1,230 @@
+/home/tenith/web-dev/todo_list_app 
+/home/tenith/web-dev/todo_list_app /app.py
+/home/tenith/web-dev/todo_list_app /static
+/home/tenith/web-dev/todo_list_app /static/style.css
+/home/tenith/web-dev/todo_list_app /file_list.txt
+/home/tenith/web-dev/todo_list_app /help
+/home/tenith/web-dev/todo_list_app /templates
+/home/tenith/web-dev/todo_list_app /templates/index.html
+EOF
+--- Start of /home/tenith/web-dev/todo_list_app /app.py ---
+from flask import Flask, render_template, request, redirect
+import psycopg2
+
+app = Flask(__name__)
+
+# Database connection
+conn =psycopg2.connect(
+    dbname="mydatabase",
+    user="web",
+    password="6",
+    host="localhost",
+    port="5432"
+)
+
+cursor = conn.cursor()
+
+# Create table if not exists
+cursor.execute("""
+    CREATE TABLE IF NOT EXISTS tasks (
+        id SERIAL PRIMARY KEY,
+        task TEXT NOT NULL,
+        completed BOOLEAN DEFAULT FALSE
+    )
+""")
+conn.commit()
+
+@app.route('/')
+def index():
+    cursor.execute("SELECT * FROM tasks ORDER BY id ASC")
+    tasks = cursor.fetchall()
+    return render_template('index.html', tasks=tasks)
+
+@app.route('/add', methods=['POST'])
+def add_task():
+    task = request.form['task']
+    if task:
+        cursor.execute("INSERT INTO tasks (task) VALUES (%s)", (task,))
+        conn.commit()
+    return redirect('/')
+
+@app.route('/complete/<int:task_id>')
+def complete_task(task_id):
+    cursor.execute("UPDATE tasks SET completed = TRUE WHERE id = %s", (task_id,))
+    conn.commit()
+    return redirect('/')
+
+@app.route('/delete/<int:task_id>')
+def delete_task(task_id):
+    cursor.execute("DELETE FROM tasks WHERE id = %s", (task_id,))
+    conn.commit()
+    return redirect('/')
+
+if __name__ == '__main__':
+    app.run(debug=True)
+--- End of /home/tenith/web-dev/todo_list_app /app.py ---
+--- Start of /home/tenith/web-dev/todo_list_app /static/style.css ---
+/* Dark Theme Styles */
+body {
+    background-color: #121212;
+    color: #ffffff;
+    font-family: Arial, sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 400px;
+    margin: auto;
+    background: #1e1e1e;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+h2 {
+    color: #ffffff;
+}
+
+form {
+    margin: 20px 0;
+}
+
+input {
+    width: 80%;
+    padding: 10px;
+    border: none;
+    background-color: #333;
+    color: white;
+    border-radius: 5px;
+}
+
+button {
+    padding: 10px 15px;
+    background-color: #6200ea;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #3700b3;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    padding: 10px;
+    margin: 5px;
+    background-color: #333;
+    border-radius: 5px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+li.completed {
+    text-decoration: line-through;
+    color: #888;
+}
+
+a {
+    color: #bb86fc;
+    text-decoration: none;
+    margin-left: 10px;
+    font-size: 20px;
+}
+
+a:hover {
+    color: #ffffff;
+}
+--- End of /home/tenith/web-dev/todo_list_app /static/style.css ---
+--- Start of /home/tenith/web-dev/todo_list_app /file_list.txt ---
+--- End of /home/tenith/web-dev/todo_list_app /file_list.txt ---
+--- Start of /home/tenith/web-dev/todo_list_app /help ---
+sudo apt update
+sudo apt install libpq-dev python3-dev
+
+pip install Flask psycopg2--- End of /home/tenith/web-dev/todo_list_app /help ---
+--- Start of /home/tenith/web-dev/todo_list_app /templates/index.html ---
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #121212;
+            color: #ffffff;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin: 10px 0;
+        }
+        .completed {
+            text-decoration: line-through;
+            color: #757575;
+        }
+        input[type="text"] {
+            background-color: #333333;
+            color: #ffffff;
+            border: none;
+            padding: 10px;
+            margin-bottom: 10px;
+            width: 200px;
+        }
+        button {
+            background-color: #6200ee;
+            color: #ffffff;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #3700b3;
+        }
+        a {
+            color: #bb86fc;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+        a:hover {
+            color: #3700b3;
+        }
+        .icon {
+            margin-left: 10px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>To-Do List</h1>
+    <form action="/add" method="POST">
+        <input type="text" name="task" required>
+        <button type="submit"><i class="fas fa-plus"></i> Add Task</button>
+    </form>
+    <ul>
+        {% for task in tasks %}
+        <li class="{{ 'completed' if task[2] else '' }}">
+            {{ task[1] }}
+            {% if not task[2] %}
+                <a href="/complete/{{ task[0] }}" class="icon"><i class="fas fa-check"></i></a>
+            {% endif %}
+            <a href="/delete/{{ task[0] }}" class="icon"><i class="fas fa-trash"></i></a>
+        </li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+--- End of /home/tenith/web-dev/todo_list_app /templates/index.html ---

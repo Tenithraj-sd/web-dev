@@ -1,0 +1,12 @@
+/flask_project
+│-- app.py
+│-- /templates
+│   │-- home.html
+│   │-- about.html
+│   │-- contact.html
+│   │-- layout.html
+│-- /static
+│   │-- style.css
+│   │-- script.js
+
+mkdir -p templates static && touch templates/{home.html,about.html,contact.html,layout.html} static/{style.css,script.js}

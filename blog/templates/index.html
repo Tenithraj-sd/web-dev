@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Posts</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+</head>
+<body>
+    <div class="header">
+        <h1>📚 My Blog</h1>
+        <a class="btn" href="/add"><i class="fas fa-plus"></i> New Post</a>
+    </div>
+    
+    <div class="container">
+        {% for post in posts %}
+        <div class="card">
+            <div class="card-header">
+                <h2>{{ post[1] }}</h2>
+            </div>
+            <div class="card-content">
+                <p>{{ post[2] }}</p>
+            </div>
+            <div class="card-footer">
+                <a href="/edit/{{ post[0] }}" class="edit-btn"><i class="fas fa-edit"></i> Edit</a>
+                <a href="/delete/{{ post[0] }}" class="delete-btn"><i class="fas fa-trash"></i> Delete</a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>

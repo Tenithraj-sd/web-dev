@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h2>Contact Us</h2>
+        <form method="POST" enctype="multipart/form-data">
+            {{ form.hidden_tag() }}
+            <div class="form-group">
+                {{ form.name.label }} <br>
+                {{ form.name(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.email.label }} <br>
+                {{ form.email(class="form-control") }}
+            </div>
+            <div class="form-group">
+                {{ form.message.label }} <br>
+                {{ form.message(class="form-control", rows=4) }}
+            </div>
+            <div class="form-group">
+                {{ form.attachment.label }} <br>
+                {{ form.attachment(class="form-control") }}
+            </div>
+            <button type="submit" class="btn">Send Message</button>
+        </form>
+        {% for message in get_flashed_messages() %}
+            <p class="success-message">{{ message }}</p>
+        {% endfor %}
+    </div>
+</body>
+</html>

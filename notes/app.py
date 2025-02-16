@@ -9,6 +9,8 @@ from urllib.parse import urlparse
 
 # Load DATABASE_URL from environment variables
 DATABASE_URL = 'postgresql://web:VUgydDpJ1NCK14RYy4AUPTifXKewEy6w@dpg-cuolj8lds78s738m3etg-a/notes_zb32'
+
+#DATABASE_URL = 'postgresql://web:VUgydDpJ1NCK14RYy4AUPTifXKewEy6w@dpg-cuolj8lds78s738m3etg-a.oregon-postgres.render.com/notes_zb32'
 def get_db_connection():
     result = urlparse(DATABASE_URL)
 
@@ -19,6 +21,21 @@ def get_db_connection():
         host=result.hostname,
         port=result.port
     )
+
+# Initialize Database (Creates 'notes' Table)
+def init_db():
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    cursor.execute("""
+        CREATE TABLE IF NOT EXISTS notes (
+            id SERIAL PRIMARY KEY,
+            content TEXT NOT NULL,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    conn.commit()
+    cursor.close()
+    conn.close()
 
 @app.route("/", methods=["GET", "POST"])
 def index():
